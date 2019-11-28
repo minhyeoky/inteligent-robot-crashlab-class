@@ -11,8 +11,16 @@ HEIGHT = 160
 FPS = 30
 
 import sys
-import tensorflow as tf
 print(sys.version)
+
+
+
+
+
+
+
+
+
 
 
 def talker():
