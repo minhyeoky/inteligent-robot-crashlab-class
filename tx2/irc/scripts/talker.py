@@ -197,7 +197,7 @@ def inference(img: np.ndarray) -> dict:
 
 
 def get_direction(boxes: list) -> list:
-  dir = 0
+  direction = 0
   largest_person = -1
 
   for each in boxes:
@@ -207,9 +207,9 @@ def get_direction(boxes: list) -> list:
     x_center = x_min + (x_max - x_min) / 2
 
     if largest_person < area:
-      dir = x_center
+      direction = x_center
       largest_person = area
-  return dir
+  return direction
 
 
 def talker():
