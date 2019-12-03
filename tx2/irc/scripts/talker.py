@@ -11,13 +11,13 @@ from std_msgs.msg import String
 
 # CONSTANTS
 GIF_FILE_PATH = '/home/crashtx2/TEST.gif'
-MAX_RUN_TIME_SEC = 10
+MAX_RUN_TIME_SEC = -1
 PERSON_CLASSID = 1
 THRESHOLD_PERSON = 0.5
-DEV_VIDEO = 1  # dev/video1
+DEV_VIDEO = 1    # dev/video1
 WIDTH = 300
 HEIGHT = 300
-FPS = 30
+FPS = 10
 MODEL_PATH = '/home/crashtx2/catkin_ws/src/irc/model/saved_model'
 IMGS_FOR_GIF = []
 
@@ -139,7 +139,6 @@ image_tensor = _graph.get_tensor_by_name('image_tensor:0')
 
 logger.debug(image_tensor)
 
-
 #################### ROS ####################
 
 
@@ -147,13 +146,13 @@ def inference(img: np.ndarray) -> dict:
   img_orig = np.copy(img)
   img = np.expand_dims(img, 0)
   ND, DS, DC, DB = sess.run(
-    [num_detections, detection_scores, detection_classes, detection_boxes],
-    feed_dict={image_tensor: img})
+      [num_detections, detection_scores, detection_classes, detection_boxes],
+      feed_dict={image_tensor: img})
   output_dict = {
-    'num_detections': ND.astype(np.int8)[0],
-    'detection_scores': DS[0],
-    'detection_classes': DC.astype(np.int8)[0],
-    'detection_boxes': DB[0]
+      'num_detections': ND.astype(np.int8)[0],
+      'detection_scores': DS[0],
+      'detection_classes': DC.astype(np.int8)[0],
+      'detection_boxes': DB[0]
     # Detection box, name: detection_boxes.
     # Contains detection boxes coordinates in format [y_min, x_min, y_max, x_max],
     # where (x_min, y_min) are coordinates of the top left corner,
@@ -163,14 +162,14 @@ def inference(img: np.ndarray) -> dict:
 
   def _vis_img(image):
     return vis_util.visualize_boxes_and_labels_on_image_array(
-      image=image,
-      boxes=output_dict['detection_boxes'],
-      classes=output_dict['detection_classes'],
-      scores=output_dict['detection_scores'],
-      category_index=category_index,
-      min_score_thresh=THRESHOLD_PERSON,
-      use_normalized_coordinates=True,
-      line_thickness=5)
+        image=image,
+        boxes=output_dict['detection_boxes'],
+        classes=output_dict['detection_classes'],
+        scores=output_dict['detection_scores'],
+        category_index=category_index,
+        min_score_thresh=THRESHOLD_PERSON,
+        use_normalized_coordinates=True,
+        line_thickness=5)
 
   _num_detections = output_dict['num_detections']
   logger.debug(f'_num_detections: {_num_detections}')
@@ -215,7 +214,7 @@ def get_direction(boxes: list) -> list:
 def talker():
   pub = rospy.Publisher('chatter', String, queue_size=10)
   rospy.init_node('talker', anonymous=True)
-  rate = rospy.Rate(10)  # 10hz
+  rate = rospy.Rate(10)    # 10hz
 
   # Set webcam
   vc = cv2.VideoCapture(DEV_VIDEO)
@@ -240,7 +239,6 @@ def talker():
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
     # detect objects
-
     if status:
       bbs: dict = inference(img)
       direction = get_direction(bbs['detection_boxes'])
@@ -257,13 +255,15 @@ def talker():
     if t >= 1.:
       idx_total += 1
       logger.debug(f'time passed: {t}')
-      logger.debug(f'inference fps: {idx}')
+      logger.info(f'inference fps: {idx}')
       start = time()
       idx = 0
     if idx_total > MAX_RUN_TIME_SEC:
+      if MAX_RUN_TIME_SEC < 0:
+        continue
       break
 
-  if MAX_RUN_TIME_SEC <= 30:
+  if 0 < MAX_RUN_TIME_SEC <= 30:
     with io.get_writer(GIF_FILE_PATH, mode='I', duration=0.1) as writer:
       for img in IMGS_FOR_GIF:
         writer.append_data(img)
