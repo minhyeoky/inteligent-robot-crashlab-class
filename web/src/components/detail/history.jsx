@@ -1,13 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components'
-import {
-    Table,
-    TableHead,
-    TableCell,
-    TableRow,
-    TableBody,
-} from "@material-ui/core";
+import {Table, TableBody, TableCell, TableHead, TableRow,} from "@material-ui/core";
 
 
 const HistoryWrapper = styled('div')`

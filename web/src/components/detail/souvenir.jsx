@@ -1,14 +1,6 @@
 import React, {Component} from 'react';
-import PropTypes from 'prop-types';
-import {
-    Card,
-    CardHeader,
-    TextField,
-    IconButton,
-    Button
-} from '@material-ui/core'
+import {Button, Card, CardHeader, IconButton, TextField} from '@material-ui/core'
 import styled from "styled-components";
-
 
 
 const CardWrapper = styled('div')`
@@ -28,7 +20,7 @@ const CardWrapper = styled('div')`
     overflow: hidden;
   }
   
-`
+`;
 
 
 class Souvenir extends Component {
@@ -78,12 +70,12 @@ class Souvenir extends Component {
                         onClick={this.handleExpandClick}
                         edge={'end'}
                     >
-                    <Button
-                        variant="contained"
-                        color={"primary"}
-                        fullWidth={true}>
-                        이메일 보내기
-                    </Button>
+                        <Button
+                            variant="contained"
+                            color={"primary"}
+                            fullWidth={true}>
+                            이메일 보내기
+                        </Button>
                     </IconButton>
                 </Card>
             </CardWrapper>
@@ -91,7 +83,6 @@ class Souvenir extends Component {
     }
 }
 
-Souvenir.propTypes = {
-};
+Souvenir.propTypes = {};
 
 export default Souvenir;
