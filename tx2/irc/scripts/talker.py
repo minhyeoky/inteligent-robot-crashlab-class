@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 
 import cv2
-from time import time
 import sys
-import imageio as io
-from object_detection.utils import visualization_utils as vis_util
+from time import time
 
+import imageio as io
 import rospy
+from object_detection.utils import visualization_utils as vis_util
 from std_msgs.msg import String
 
 # CONSTANTS
@@ -212,7 +212,7 @@ def get_direction(boxes: list) -> list:
 
 
 def talker():
-  pub = rospy.Publisher('chatter', String, queue_size=10)
+  pub = rospy.Publisher('chatter', String, queue_size=1)
   rospy.init_node('talker', anonymous=True)
   rate = rospy.Rate(10)    # 10hz
 
