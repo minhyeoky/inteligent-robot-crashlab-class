@@ -2,6 +2,7 @@ import * as React from 'react';
 import qr from "../assets/qr.png";
 import {withRouter} from "react-router-dom";
 import {ButtonWrapper, DivWrapper, ImageWrapper} from "./common";
+import {post_status} from "./utils";
 
 
 type
@@ -14,11 +15,18 @@ class QR extends React.Component<Props, State> {
         super(props);
     }
 
-    // componentDidMount(): void {
-    //     setTimeout(() => {
-    //         this.props.history.push('/guide')
-    //     }, 500)
-    // }
+    componentDidMount(): void {
+        const current_url = window.location.pathname;
+        setInterval(() => {
+            if (current_url !== '/intro') {
+                post_status(2)
+            }
+        }, 100);
+        setTimeout(() => {
+            this.props.history.push('/intro')
+        }, 10000)
+    }
+
     toNextPage() {
         this.props.history.push('/guide');
     }

@@ -4,8 +4,10 @@ import {DivWrapper, ImageWrapper} from "./common";
 import PictureImage from "../assets/picture.png";
 
 
-type Props = {};
-type State = {};
+type
+Props = {};
+type
+State = {};
 
 class Picture extends React.Component<Props, State> {
     render() {

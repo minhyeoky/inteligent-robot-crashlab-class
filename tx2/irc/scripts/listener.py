@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #
 import rospy
-from std_msgs.msg import String
+from std_msgs.msg import String, UInt8
 
 
 def callback(data):
@@ -17,7 +17,10 @@ def listener():
   # run simultaneously.
   rospy.init_node('listener', anonymous=True)
 
-  rospy.Subscriber('chatter', String, callback)
+  # rospy.Subscriber('width', String, callback)
+  # rospy.Subscriber('height', String, callback)
+  # rospy.Subscriber('direction', String, callback)
+  rospy.Subscriber('status', UInt8, callback)
 
   # spin() simply keeps python from exiting until this node is stopped
   rospy.spin()

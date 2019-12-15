@@ -2,6 +2,7 @@ import introImage from '../assets/intro.png';
 import * as React from 'react';
 import {withRouter} from "react-router-dom";
 import {ButtonWrapper, DivWrapper, ImageWrapper} from "./common";
+import {post_status} from "./utils";
 
 
 type
@@ -16,13 +17,14 @@ class Intro extends React.Component<Props, State> {
         super(props);
     }
 
-    //
-    // componentDidMount(): void {
-    //     setTimeout(() => {
-    //         this.props.history.push('/qr')
-    //         // 5000ms 이후 qr 페이지로 이동
-    //     }, 100000)
-    // }
+    componentDidMount(): void {
+        setInterval(() => {
+            const current_url = window.location.pathname;
+            if (current_url === '/intro') {
+                post_status(1);
+            }
+        }, 100)
+    }
 
     toNextPage() {
         this.props.history.push('/qr');
@@ -33,7 +35,7 @@ class Intro extends React.Component<Props, State> {
             <DivWrapper>
                 <ImageWrapper src={introImage} alt={'introImage'}/>
                 <ButtonWrapper onClick={this.toNextPage.bind(this)}>
-                    알겠습니다!
+                    <p>알겠습니다!</p>
                 </ButtonWrapper>
             </DivWrapper>
         );

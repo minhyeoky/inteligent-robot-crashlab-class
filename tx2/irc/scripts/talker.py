@@ -4,12 +4,13 @@ import cv2
 import sys
 from time import time
 
-import imageio as io
+# import imageio as io
 import rospy
 from object_detection.utils import visualization_utils as vis_util
-from std_msgs.msg import String
+from std_msgs.msg import String, Float32
 
 # CONSTANTS
+TOPIC_STATUS = 'direction'
 GIF_FILE_PATH = '/home/crashtx2/TEST.gif'
 MAX_RUN_TIME_SEC = -1
 PERSON_CLASSID = 1
@@ -109,7 +110,7 @@ import tensorflow as tf
 import numpy as np
 
 logger = tf.get_logger()
-logger.setLevel('DEBUG')
+logger.setLevel('INFO')
 logger.debug(sys.version)
 logger.debug(tf.__version__)
 
@@ -186,17 +187,19 @@ def inference(img: np.ndarray) -> dict:
     if _ds > THRESHOLD_PERSON and _dc == PERSON_CLASSID:
       ret_dict['detection_boxes'].append(_db)
 
-  direction = get_direction(ret_dict['detection_boxes'])
-  category_index[1]['name'] = direction
+  # direction = get_direction(ret_dict['detection_boxes'])
+  # category_index[1]['name'] = direction
 
-  img_with_boxes_and_labels = _vis_img(img_orig)
-  IMGS_FOR_GIF.append(img_with_boxes_and_labels)
+  # img_with_boxes_and_labels = _vis_img(img_orig)
+  # IMGS_FOR_GIF.append(img_with_boxes_and_labels)
 
   return ret_dict
 
 
 def get_direction(boxes: list) -> list:
   direction = 0
+  width = None
+  height = None
   largest_person = -1
 
   for each in boxes:
@@ -208,13 +211,19 @@ def get_direction(boxes: list) -> list:
     if largest_person < area:
       direction = x_center
       largest_person = area
-  return direction
+      width = x_max - x_min
+      height = y_max - y_min
+
+  return direction, height, width
 
 
 def talker():
-  pub = rospy.Publisher('chatter', String, queue_size=1)
+  pub_1 = rospy.Publisher(TOPIC_STATUS, String,
+                          queue_size=10)    # TODO Float32 Test 및 변경점 알려주
+  pub_2 = rospy.Publisher('height', Float32, queue_size=1)
+  pub_3 = rospy.Publisher('width', Float32, queue_size=1)
   rospy.init_node('talker', anonymous=True)
-  rate = rospy.Rate(10)    # 10hz
+  rate = rospy.Rate(100)    # 10hz
 
   # Set webcam
   vc = cv2.VideoCapture(DEV_VIDEO)
@@ -241,11 +250,15 @@ def talker():
     # detect objects
     if status:
       bbs: dict = inference(img)
-      direction = get_direction(bbs['detection_boxes'])
+      direction, width, height = get_direction(bbs['detection_boxes'])
       logger.info(direction)
       msg = str(direction)
       rospy.loginfo(msg)
-      pub.publish(msg)
+      pub_1.publish(msg)
+      pub_2.publish(height)
+      pub_3.publish(width)
+      # pub_2.publish() # TODO height
+      # pub_3.publish() # TODO width
       rate.sleep()
 
     # END

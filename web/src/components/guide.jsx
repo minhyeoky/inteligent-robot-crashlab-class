@@ -2,6 +2,8 @@ import * as React from "react";
 import {ButtonWrapper, DivWrapper, ImageWrapper} from "./common";
 import guideImage_1 from "../assets/guide.png";
 import {withRouter} from "react-router-dom";
+import {post_status} from "./utils.js";
+import {get_status} from "./utils";
 
 
 /*
@@ -16,7 +18,27 @@ class Guide extends React.Component<Props, State> {
 
     constructor(props) {
         super(props);
+    }
 
+    componentDidMount(): void {
+        let current_url = window.location.pathname;
+        setInterval(() => {
+            if (current_url !== '/intro') {
+                post_status(2);
+                get_status(this);
+            }
+        }, 100);
+        setTimeout(() => {
+            // let current_url = this.props.loca;
+            if (current_url === '/guide') {
+                this.props.history.push('/intro');
+            }
+        }, 2000000)
+    }
+
+    toIntro() {
+        console.log('toIntro');
+        this.props.history.push('/intro');
     }
 
     toYes() {

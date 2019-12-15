@@ -1,40 +1,50 @@
 #!/usr/bin/env python3
-from collections import namedtuple
-from enum import Enum
 
-import rospy
-from std_msgs.msg import UInt8, String
+# import rospy
+# from std_msgs.msg import String, UInt8
+from flask import Flask, jsonify, request, abort
+from flask_cors import CORS
+from common import Status
+import sys
+
+status = Status.Follow
+node_name = 'web_server'
+topic = 'web'
+
+app = Flask(__name__)
+CORS(app)
+
+# pub = rospy.Publisher(topic, UInt8, queue_size=1)
+# # sub = rospy.Subscriber('status', UInt8,
+# #                        lambda x: print(f"Got status, {x.data}"))
+# rospy.init_node(node_name, anonymous=True)
+# rospy.loginfo(f'rospy {node_name}, topic: {topic} started')
 
 
-class Status(Enum):
-  Follow = 1
-  Donating = 2
-  Donated = 3
+@app.route('/test', methods=['GET'])
+def get_test():
+  # pub.publish(0)
+  # rospy.loginfo('Http response /test OK')
+  return 'Test OK'
 
 
-STATUS = Status.Follow    # default
-# 웹, 서보모터(팔), 바퀴모터, 표정
-# TODO 양방향 토픽은 이름 분리 해야 하나?
-publishers = namedtuple('Publishers', ['web', 'servo', 'motor', 'emotion'])
-subscribers = namedtuple('Subscribers', ['web', 'camera'])
+@app.route('/status', methods=['POST'])
+def post_status():
+  global status
+  action = request.args.get('action')    # query
+  print(f'post_status, action: {action}')
+  status = Status(int(action))
+  return 'POST'
 
-Publisher = rospy.Publisher
-Subscriber = rospy.Subscriber
 
-publishers.web = Publisher('web', UInt8, queue_size=1)
-# publishers.servo = Publisher('servo', Int, queue_size=1)
-publishers.wheel = Publisher('motor', UInt8, queue_size=1)
+@app.route('/status', methods=['GET'])
+def get_status():
+  global status
+  response = {'status': status}
+  print(f'get_status, response: {response}')
+  return response
 
-# rospy.init_node('main', anoymous=False)
-# subscribers.web = Subscriber('web', Int, queue_size=1)
-subscribers.web = Subscriber('camera', String, queue_size=1)
-
-while not rospy.is_shutdown():
-  rospy.loginfo('Hi')
-
-# status
-# publishers
-# subscribes
 
 if __name__ == '__main__':
-  pass
+  app.run(debug=True, host='0.0.0.0', port=5002)
+  # rospy.spin()
