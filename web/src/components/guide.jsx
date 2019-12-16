@@ -22,12 +22,7 @@ class Guide extends React.Component<Props, State> {
 
     componentDidMount(): void {
         let current_url = window.location.pathname;
-        setInterval(() => {
-            if (current_url !== '/intro') {
-                post_status(2);
-                get_status(this);
-            }
-        }, 100);
+        post_status(2);
         setTimeout(() => {
             // let current_url = this.props.loca;
             if (current_url === '/guide') {
@@ -36,14 +31,9 @@ class Guide extends React.Component<Props, State> {
         }, 2000000)
     }
 
-    toIntro() {
-        console.log('toIntro');
-        this.props.history.push('/intro');
-    }
-
     toYes() {
         // 사진 촬영 페이지로 이동
-        this.props.history.push('/picture');
+        this.props.history.push('/photo');
     }
 
     toNo() {

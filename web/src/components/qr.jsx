@@ -17,14 +17,10 @@ class QR extends React.Component<Props, State> {
 
     componentDidMount(): void {
         const current_url = window.location.pathname;
-        setInterval(() => {
-            if (current_url !== '/intro') {
-                post_status(2)
-            }
-        }, 100);
+        post_status(2);
         setTimeout(() => {
             this.props.history.push('/intro')
-        }, 10000)
+        }, 200000) // TODO 20초
     }
 
     toNextPage() {

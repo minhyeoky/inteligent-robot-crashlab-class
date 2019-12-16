@@ -23,7 +23,11 @@ class Intro extends React.Component<Props, State> {
             if (current_url === '/intro') {
                 post_status(1);
             }
-        }, 100)
+        }, 1000)
+    }
+
+    componentWillUnmount(): void {
+        clearInterval();
     }
 
     toNextPage() {
