@@ -5,7 +5,9 @@ import {Button} from "@material-ui/core";
 
 export const DivWrapper = styled('div')`
 div {
-
+  width: 720px;
+  height: 500px;
+  
 }
 `;
 
