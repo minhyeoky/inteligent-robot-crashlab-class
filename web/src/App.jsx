@@ -6,10 +6,12 @@ import styled, {createGlobalStyle} from 'styled-components'
 
 import Detail from "./components/detail/detail";
 import Intro from "./components/intro";
+import Intro2 from "./components/intro2";
 import QR from "./components/qr";
 import Retrieve from "./components/retrieve";
 import Guide from "./components/guide";
 import Photo from "./components/photo";
+import Yes from "./components/yes";
 
 
 const GloablStyle = createGlobalStyle`
@@ -19,12 +21,12 @@ const GloablStyle = createGlobalStyle`
   overflow: auto;
   }
   body {
-  background-color: lightgray;
+  background-color: white;
   }
 `;
 
 const AppWrapper = styled('div')`
-  border: 1px solid red;
+  //border: 1px solid black;
   width: 720px;
   margin: auto;
   background-color: white;
@@ -42,6 +44,12 @@ function App() {
                     </Route>
                     <Route path={'/intro'}>
                         <Intro/>
+                    </Route>
+                    <Route path={'/intro2'}>
+                        <Intro2/>
+                    </Route>
+                    <Route path={'/yes'}>
+                        <Yes/>
                     </Route>
                     <Route path={'/qr'}>
                         <QR/>

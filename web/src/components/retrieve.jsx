@@ -11,6 +11,7 @@ type
     State = {
     phoneNumber: string;
     secondHypen: string;
+    ok: string;
 };
 
 const ButtonContainer = styled('div')`
@@ -21,29 +22,40 @@ const ButtonContainer = styled('div')`
 
 const ButtonItem = styled(Button)`
 && {
-  //border: 1px solid green;
+  border: 2px solid #0a3a5d;
+  //border-radius: 30px;
   font-weight: bold;
-  font-size: 30px;
+  font-size: 40px;
+  color: black;
   //background-color: ;
 }
 `;
 
 const PhoneNumberDisplayWrapper = styled('div')`
-height: 165px;
-text-align: center;
+  height: 165px;
+  text-align: center;
   font-size: 90px;
   font-weight: bold;
   padding: auto;
   margin: auto;
+  border: 2px solid #0a3a5d;
+  //border-radius: 30px;
+  span {
+    height: 165px;
+    color: black;
+    vertical-align: middle;
+  }
 `;
 
 
 export class Retrieve extends React.Component<Props, State> {
 
     constructor(props) {
+        // 어떤 목적으로 번호를 얻는 지에 대한 음성안내 메시지가 나올 것
         super(props);
         this.state = {
             phoneNumber: '010',
+            ok: '확인'
         }
         ;
     }
@@ -51,11 +63,27 @@ export class Retrieve extends React.Component<Props, State> {
     onDone = () => {
         let phoneNumber = this.state.phoneNumber;
         if (phoneNumber.length !== 11) {
+            this.setState({
+                ok: '재확인'
+            });
             return false;
         }
 
         // 서버로 전송
-        this.props.history.push('/loading');
+        let xhr = new XMLHttpRequest()
+        xhr.open('POST', 'http://localhost:5002/done?phoneNumber=' + {phoneNumber});
+        xhr.onload = () => {
+          if (xhr.status === 200) {
+              console.log('[retrieve]');
+              console.log(xhr.statusText);
+          }
+        };
+        xhr.onerror = () => {
+            console.log('error in posting retrieve');
+        }
+        xhr.send();
+
+        this.props.history.push('/intro');
     };
 
     onButtonClicked = (num: string) => {
@@ -137,7 +165,7 @@ export class Retrieve extends React.Component<Props, State> {
                         this.onButtonClicked('9')
                     }}>9</ButtonItem>
                     <ButtonItem onClick={this.onDone}>
-                        확인
+                        {this.state.ok}
                     </ButtonItem>
                 </ButtonContainer>
             </DivWrapper>

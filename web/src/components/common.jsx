@@ -13,11 +13,14 @@ export const ButtonWrapper = styled(Button)`
   && {
   // override material ui css rules by '&&'
   width: 720px;
-  height: 120px;
-  font-size: xx-large;
+  height: 100px;
+  font-size: 70px;
   font-weight: bold;
   color: #0a3a5d;
   padding: 0 0;
+  p {
+    vertical-align: top;
+  }
 }
 `;
 

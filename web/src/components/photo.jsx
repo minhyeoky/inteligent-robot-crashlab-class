@@ -44,23 +44,14 @@ class Photo extends React.Component<Props, State> {
 
     getPhoto = () => {
         console.log('getting photo');
-        let xhr = new XMLHttpRequest();
-        xhr.open('get', 'http://localhost:5002/photo');
-        xhr.onload = () => {
-            console.log(xhr.statusText);
-            loadImage().then((img) => {
-                this.setState({
-                    photo: URL.createObjectURL(img),
-                    // 'blob' <img> src 사용하기 위해서 url 형태로 저장
-                    buttonText: '넘어가기',
-                    buttonCallback: this.toIntro
-                })
+        loadImage().then((img) => {
+            this.setState({
+                photo: URL.createObjectURL(img),
+                // 'blob' <img> src 사용하기 위해서 url 형태로 저장
+                buttonText: '넘어가기',
+                buttonCallback: this.toIntro
             })
-        };
-        xhr.onerror = () => {
-            console.log(xhr.statusText);
-        };
-        xhr.send(null);
+        })
     };
 
     toIntro = () => {

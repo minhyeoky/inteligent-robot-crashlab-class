@@ -1,8 +1,8 @@
-import introImage from '../assets/intro.png';
-import * as React from 'react';
-import {withRouter} from "react-router-dom";
-import {ButtonWrapper, DivWrapper, ImageWrapper} from "./common";
+import * as React from "react";
 import {post_status} from "./utils";
+import {ButtonWrapper, DivWrapper, ImageWrapper} from "./common";
+import introImage from "../assets/intro2.png";
+import {withRouter} from "react-router-dom";
 
 
 type
@@ -10,8 +10,7 @@ type
 type
     State = {};
 
-
-class Intro extends React.Component<Props, State> {
+class Intro2 extends React.Component<Props, State> {
 
     constructor(props) {
         super(props);
@@ -31,7 +30,7 @@ class Intro extends React.Component<Props, State> {
     }
 
     toNextPage() {
-        this.props.history.push('/intro2');
+        this.props.history.push('/yes');
     }
 
     render() {
@@ -39,12 +38,11 @@ class Intro extends React.Component<Props, State> {
             <DivWrapper>
                 <ImageWrapper src={introImage} alt={'introImage'}/>
                 <ButtonWrapper onClick={this.toNextPage.bind(this)}>
-                    <p>알겠습니다!</p>
+                    <p>좋아요!</p>
                 </ButtonWrapper>
             </DivWrapper>
         );
     };
 }
 
-
-export default withRouter(Intro)
+export default withRouter(Intro2);
