@@ -3,6 +3,7 @@ import {withRouter} from "react-router-dom";
 import {Button} from "@material-ui/core";
 import {DivWrapper} from "./common";
 import styled from "styled-components";
+import {post_status} from "./utils";
 
 
 type
@@ -16,7 +17,7 @@ type
 
 const ButtonContainer = styled('div')`
   display: grid;
-  grid-template-rows: 165px 165px 165px;
+  grid-template-rows: 145px 145px 145px;
   grid-template-columns: 180px 180px 180px 180px;
 `;
 
@@ -32,7 +33,7 @@ const ButtonItem = styled(Button)`
 `;
 
 const PhoneNumberDisplayWrapper = styled('div')`
-  height: 165px;
+  height: 145px;
   text-align: center;
   font-size: 90px;
   font-weight: bold;
@@ -60,6 +61,14 @@ export class Retrieve extends React.Component<Props, State> {
         ;
     }
 
+    componentDidMount(): void {
+        post_status(7);
+    }
+
+    componentWillUnmount(): void {
+        clearInterval();
+    }
+
     onDone = () => {
         let phoneNumber = this.state.phoneNumber;
         if (phoneNumber.length !== 11) {
@@ -73,10 +82,10 @@ export class Retrieve extends React.Component<Props, State> {
         let xhr = new XMLHttpRequest()
         xhr.open('POST', 'http://localhost:5002/done?phoneNumber=' + {phoneNumber});
         xhr.onload = () => {
-          if (xhr.status === 200) {
-              console.log('[retrieve]');
-              console.log(xhr.statusText);
-          }
+            if (xhr.status === 200) {
+                console.log('[retrieve]');
+                console.log(xhr.statusText);
+            }
         };
         xhr.onerror = () => {
             console.log('error in posting retrieve');

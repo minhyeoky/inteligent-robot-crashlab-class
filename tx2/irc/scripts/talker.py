@@ -7,7 +7,7 @@ from time import time
 # import imageio as io
 import rospy
 from object_detection.utils import visualization_utils as vis_util
-from std_msgs.msg import String, Float32
+from std_msgs.msg import String, UInt8
 
 # CONSTANTS
 TOPIC_STATUS = 'direction'
@@ -16,9 +16,9 @@ MAX_RUN_TIME_SEC = -1
 PERSON_CLASSID = 1
 THRESHOLD_PERSON = 0.5
 DEV_VIDEO = 1    # dev/video1
-WIDTH = 300
-HEIGHT = 300
-FPS = 10
+WIDTH = 352
+HEIGHT = 288
+FPS = 7
 MODEL_PATH = '/home/crashtx2/catkin_ws/src/irc/model/saved_model'
 IMGS_FOR_GIF = []
 
@@ -196,7 +196,7 @@ def inference(img: np.ndarray) -> dict:
   return ret_dict
 
 
-def get_direction(boxes: list) -> list:
+def get_direction(boxes: list):
   direction = 0
   width = None
   height = None
@@ -216,74 +216,57 @@ def get_direction(boxes: list) -> list:
 
   return direction, height, width
 
-
-def talker():
-  pub_1 = rospy.Publisher(TOPIC_STATUS, String,
-                          queue_size=10)    # TODO Float32 Test 및 변경점 알려주
-  pub_2 = rospy.Publisher('height', Float32, queue_size=1)
-  pub_3 = rospy.Publisher('width', Float32, queue_size=1)
-  rospy.init_node('talker', anonymous=True)
-  rate = rospy.Rate(100)    # 10hz
-
-  # Set webcam
+# ROS Codes start from here.
+vc = None
+def set_default_webcam():
+  global vc
   vc = cv2.VideoCapture(DEV_VIDEO)
+  vc.set(cv2.CAP_PROP_FPS, FPS)
   vc.set(cv2.CAP_PROP_FRAME_WIDTH, WIDTH)
   vc.set(cv2.CAP_PROP_FRAME_HEIGHT, HEIGHT)
-  vc.set(cv2.CAP_PROP_FPS, FPS)
-
-  _, img = vc.read()
-  logger.info(f'image\' shape from webcam: {img.shape}')
   if not vc.isOpened():
     logger.info('Webcam is not opened')
     sys.exit(0)
-
   logger.info('Webcam is connected successfully')
 
-  idx = 0
-  idx_total = 0
-  start = time()
-  while not rospy.is_shutdown():
-    # Read Image from Webcam
-    status, img = vc.read()
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+def find_person_and_publish():
+  global vc
+  if vc is None:
+    set_default_webcam()
 
-    # detect objects
-    if status:
-      bbs: dict = inference(img)
-      direction, width, height = get_direction(bbs['detection_boxes'])
-      logger.info(direction)
-      msg = str(direction)
-      rospy.loginfo(msg)
-      pub_1.publish(msg)
-      pub_2.publish(height)
-      pub_3.publish(width)
-      # pub_2.publish() # TODO height
-      # pub_3.publish() # TODO width
-      rate.sleep()
+  status, img = vc.read()
+  img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+  # detect objects
+  if status:
+    bbs: dict = inference(img)
+    direction, width, height = get_direction(bbs['detection_boxes'])
+    msg = str(direction)
+    rospy.loginfo(f'{__file__}: direction: {msg}')
+    rospy.loginfo(f'{__file__}: width: {width}')
+    rospy.loginfo(f'{__file__}: height: {height}')
+    pub_1.publish(msg)
+    pub_2.publish(str(height))
+    pub_3.publish(str(width))
+    rate.sleep()
 
-    # END
-    idx += 1
-    end = time()
-    t = end - start
-    if t >= 1.:
-      idx_total += 1
-      logger.debug(f'time passed: {t}')
-      logger.info(f'inference fps: {idx}')
-      start = time()
-      idx = 0
-    if idx_total > MAX_RUN_TIME_SEC:
-      if MAX_RUN_TIME_SEC < 0:
-        continue
-      break
+def status_callback(status: int):
+  status = status.data
+  if status == 1:
+    find_person_and_publish()
+  elif status > 2:
+    global vc
+    vc.release()
+    vc = None
 
-  if 0 < MAX_RUN_TIME_SEC <= 30:
-    with io.get_writer(GIF_FILE_PATH, mode='I', duration=0.1) as writer:
-      for img in IMGS_FOR_GIF:
-        writer.append_data(img)
+pub_1 = rospy.Publisher('direction', String, queue_size=1)
+pub_2 = rospy.Publisher('height', String, queue_size=1)
+pub_3 = rospy.Publisher('width', String, queue_size=1)
+sub_status = rospy.Subscriber('status', UInt8, status_callback, queue_size=1)
+rospy.init_node('talker', anonymous=True)
+rate = rospy.Rate(10)    # 10hz
 
 
-if __name__ == '__main__':
-  try:
-    talker()
-  except rospy.ROSInterruptException:
-    pass
+
+while not rospy.is_shutdown():
+  rospy.spin()
+  rate.sleep()

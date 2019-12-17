@@ -2,7 +2,7 @@ import * as React from 'react';
 import {withRouter} from "react-router-dom";
 import {ButtonWrapper, DivWrapper, ImageWrapper} from "./common";
 import PictureImage from "../assets/picture.png";
-import {loadImage, sleep} from "./utils";
+import {loadImage, post_status, sleep} from "./utils";
 import styled from "styled-components";
 
 
@@ -19,7 +19,7 @@ type
 
 const PhotoWrapper = styled('div')`
   color: #0a3a5d;
-  font-size: 85px;
+  font-size: 60px;
   text-align: center;
   vertical-align: center;
   p {
@@ -43,13 +43,15 @@ class Photo extends React.Component<Props, State> {
     }
 
     componentDidMount(): void {
+        post_status(6);
+
         setInterval(() => {
             let buttonText = this.state.buttonText;
             if (this.state.taking === false) {
                 return
             }
             if (buttonText.length > 2) {
-                buttonText = '6';
+                buttonText = '9';
             }
             let buttonText1 = (buttonText * 1 - 1).toString();
             if (buttonText1 === '1') {
@@ -122,7 +124,13 @@ class Photo extends React.Component<Props, State> {
     };
 
     render() {
-        if (this.state.taking === true) {
+        if (this.state.buttonText * 1 > 5) {
+            return (
+                <DivWrapper>
+                    <PhotoWrapper><p>촬영 준비</p></PhotoWrapper>
+                </DivWrapper>
+            );
+        } else if (this.state.taking === true) {
             return (
                 <DivWrapper>
                     <PhotoWrapper><p>{this.state.buttonText}</p></PhotoWrapper>

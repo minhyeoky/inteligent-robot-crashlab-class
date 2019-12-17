@@ -18,7 +18,7 @@ const GloablStyle = createGlobalStyle`
   * {
   padding: 0;
   margin: 0;
-  overflow: auto;
+  overflow: visible;
   }
   body {
   background-color: white;

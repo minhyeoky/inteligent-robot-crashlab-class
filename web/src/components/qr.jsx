@@ -16,8 +16,7 @@ class QR extends React.Component<Props, State> {
     }
 
     componentDidMount(): void {
-        const current_url = window.location.pathname;
-        post_status(2);
+        post_status(4);
         setTimeout(() => {
             this.props.history.push('/intro')
         }, 200000) // TODO 20초
@@ -25,6 +24,10 @@ class QR extends React.Component<Props, State> {
 
     toNextPage() {
         this.props.history.push('/guide');
+    }
+
+    componentWillUnmount(): void {
+        clearInterval();
     }
 
     render() {

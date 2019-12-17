@@ -19,8 +19,8 @@ def listener():
 
   # rospy.Subscriber('width', String, callback)
   # rospy.Subscriber('height', String, callback)
-  # rospy.Subscriber('direction', String, callback)
-  rospy.Subscriber('status', UInt8, callback)
+  rospy.Subscriber('direction', String, callback)
+  # rospy.Subscriber('status', UInt8, callback)
 
   # spin() simply keeps python from exiting until this node is stopped
   rospy.spin()

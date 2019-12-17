@@ -17,12 +17,7 @@ class Intro2 extends React.Component<Props, State> {
     }
 
     componentDidMount(): void {
-        setInterval(() => {
-            const current_url = window.location.pathname;
-            if (current_url === '/intro') {
-                post_status(1);
-            }
-        }, 1000)
+        post_status(2);
     }
 
     componentWillUnmount(): void {

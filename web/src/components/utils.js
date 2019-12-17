@@ -41,9 +41,6 @@ export let get_status = (a) => {
     xhr.send(null);
 };
 
-export let sleep = (ms) => {
-    return new Promise(resolve => setTimeout(resolve, ms));
-};
 
 export let loadImage = async () => {
     return new Promise((resolve, reject) => {
